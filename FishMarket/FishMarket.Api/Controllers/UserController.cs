@@ -16,18 +16,15 @@ namespace FishMarket.Api.Controllers
         private readonly ILogger<FishMarketController> _logger;
         private readonly IMapper _mapper;
 
-        public UserController(IUserService us, ILogger<FishMarketController> il, IMapper m)
+        public UserController(IServiceScopeFactory serviceProvider)
         {
-            _userService = us;
-            _logger = il;
-            _mapper = m;
-       
-            //using (var scope = serviceProvider.CreateScope())
-            //{
-            //    _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
-            //    _logger = scope.ServiceProvider.GetRequiredService<ILogger<FishMarketController>>();
-            //    _mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
-            //}
+            using (var scope = serviceProvider.CreateScope())
+            {
+                _logger = scope.ServiceProvider.GetRequiredService<ILogger<FishMarketController>>();
+                _mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
+                _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+
+            }
         }
 
         [HttpPost, Route("GetToken")]
@@ -47,12 +44,9 @@ namespace FishMarket.Api.Controllers
         public async Task<IActionResult> Login(UserLoginDto userLoginDto)
         {
             var token = _userService.Login(userLoginDto);
-            //await _fishManager.Add(fish);
             return Ok(token);
         }
 
-
-        
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost, Route("Register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto)

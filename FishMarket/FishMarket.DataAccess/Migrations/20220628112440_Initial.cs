@@ -35,15 +35,13 @@ namespace FishMarket.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Username = table.Column<string>(type: "longtext", nullable: false)
+                    Email = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Password = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PasswordSalt = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Email = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    EmailConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
@@ -78,8 +76,8 @@ namespace FishMarket.DataAccess.Migrations
 
             migrationBuilder.InsertData(
                 table: "User",
-                columns: new[] { "Id", "CreatedOn", "Email", "IsActive", "Password", "PasswordSalt", "Username" },
-                values: new object[] { new Guid("68b025b8-595c-4d3b-a5f9-f59c4e098b57"), new DateTime(2022, 6, 27, 21, 2, 51, 364, DateTimeKind.Local).AddTicks(138), "info@cagrierhan.com", true, "12345", "", "administrator" });
+                columns: new[] { "Id", "CreatedOn", "Email", "EmailConfirmed", "Password", "PasswordSalt" },
+                values: new object[] { new Guid("43e6f40a-626b-4de4-b0b0-3f908ea73965"), new DateTime(2022, 6, 28, 14, 24, 39, 596, DateTimeKind.Local).AddTicks(3860), "info@cagrierhan.com", true, "12345", "" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_FishPrice_FishId",

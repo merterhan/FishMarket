@@ -3,6 +3,6 @@
     public class Fish : BaseEntity
     {
         public string Type { get; set; }
-        public ICollection<FishPrice> FishPrices { get; set; }
+        public virtual ICollection<FishPrice> FishPrices { get; set; }        
     }
 }

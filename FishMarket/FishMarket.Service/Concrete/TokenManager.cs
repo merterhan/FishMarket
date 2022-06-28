@@ -8,10 +8,9 @@ namespace FishMarket.Service.Concrete
 {
     public class TokenManager : ITokenService
     {
-        private readonly IUserService _userManager;
-        public TokenManager(IUserService userManager)
+        public TokenManager()
         {
-            _userManager = userManager;
+            
         }
         public string GetToken(string email)
         {

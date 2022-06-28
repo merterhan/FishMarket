@@ -1,4 +1,5 @@
 ﻿using FishMarket.DataAccess.Abstract;
+using FishMarket.Dto;
 using FishMarket.Entities.Concrete;
 using FishMarket.Service.Abstract;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,17 +10,40 @@ namespace FishMarket.Service.Concrete
     {
 
         private readonly IFishDal _fishDal;
+        private readonly IFishPriceDal _fishPriceDal;
 
         public FishManager(IServiceScopeFactory serviceProvider)
         {
             using (var scope = serviceProvider.CreateScope())
             {
                 _fishDal = scope.ServiceProvider.GetRequiredService<IFishDal>();
+                _fishPriceDal = scope.ServiceProvider.GetRequiredService<IFishPriceDal>();
+
             }
         }
-        public async Task<Fish> Add(Fish fish)
+        public async Task<Fish> AddAsync(FishInsertDto fishInsertDto)
         {
+
+            var now = DateTime.Now;
+
+            var fish = new Fish
+            {
+                Id = Guid.NewGuid(),
+                Type = fishInsertDto.Name,
+                CreatedOn = now
+            };
+
             await _fishDal.Add(fish);
+
+            var fishPrice = new FishPrice
+            {
+                FishId = fish.Id,
+                Price = fishInsertDto.Price,
+                CreatedOn = now
+            };
+            
+            await _fishPriceDal.Add(fishPrice);
+
             return fish;
         }
 
@@ -28,21 +52,19 @@ namespace FishMarket.Service.Concrete
             return await _fishDal.Delete(id);
         }
 
-        public async Task<List<Fish>>  GetList()
+        public async Task<List<Fish>> GetListAsync()
         {
             return await _fishDal.GetList();
         }
 
-        public async Task<int> Update(Fish fish)
+        public async Task<int> UpdateAsync(Fish fish)
         {
             return await _fishDal.Update(fish);
         }
 
-        public async Task<List<Fish>> GetListAsNoTracking()
+        public async Task<List<Fish>> GetListAsNoTrackingAsync()
         {
             return await _fishDal.GetList();
         }
-
-
     }
 }

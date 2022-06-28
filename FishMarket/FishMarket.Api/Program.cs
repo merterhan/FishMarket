@@ -1,5 +1,6 @@
 using AutoMapper;
 using FishMarket.Api.Mappings;
+using FishMarket.DataAccess;
 using FishMarket.DataAccess.Abstract;
 using FishMarket.DataAccess.Concrete.EntityFrameworkCore;
 using FishMarket.Service.Abstract;
@@ -33,13 +34,14 @@ builder.Services.AddSingleton(autoMapper);
 
 #region Service Resolves
 builder.Services.AddScoped<IFishDal, EFFishDal>();
-builder.Services.AddTransient<IUserService, UserManager>();
+builder.Services.AddScoped<IUserService, UserManager>();
 builder.Services.AddScoped<IUserDal, EFUserDal>();
-builder.Services.AddTransient<IFishService, FishManager>();
-builder.Services.AddTransient<ITokenService, TokenManager>();
-
+builder.Services.AddScoped<IFishPriceDal, EFFishPriceDal>();
+builder.Services.AddScoped<IFishService, FishManager>();
+builder.Services.AddScoped<IFishPriceService, FishPriceManager>();
+builder.Services.AddScoped<ITokenService, TokenManager>();
+builder.Services.AddScoped<IUtilityService, UtilityManager>();
 #endregion
-
 builder.Services.AddControllers();
 
 #region JWT
@@ -63,7 +65,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FishMarket Api", Version = "v1" });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -96,6 +98,7 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
 app.UseAuthorization();
 app.UseAuthentication();
 

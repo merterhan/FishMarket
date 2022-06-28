@@ -10,14 +10,14 @@ namespace FishMarket.DataAccess.Concrete.EntityFrameworkCore.Configurations
         {
             entityTypeBuilder.ToTable("FishPrice");
 
-            entityTypeBuilder
-                .Ignore(i => i.CreatedBy)
-                .Ignore(i => i.ChangedOn)
-                .Ignore(i => i.ChangedBy);
 
             entityTypeBuilder
                .HasOne(f => f.Fish)
                .WithMany(fp => fp.FishPrices);
+
+            //entityTypeBuilder
+            //   .HasOne(f => f.Fish)
+            //   .WithMany(fp => fp.FishPrices);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace FishMarket.Service.Concrete
         {
             var passwordWithSalt = _utilityService.GetHashedPasswordWithSalt(user.Password);
             user.Password = (string)passwordWithSalt["hashedPassword"];
-            user.Password = (string)passwordWithSalt["salt"];
+            user.PasswordSalt = (string)passwordWithSalt["salt"];
 
             await _userDal.Add(user);
             return user;

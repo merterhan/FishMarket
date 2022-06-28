@@ -13,6 +13,10 @@ namespace FishMarket.Api.Mappings
               ForMember(u => u.Password, opt => opt.MapFrom(u2 => provider.Unprotect(u2.Password)));
             CreateMap<UserRegisterDto, User>().
               ForMember(u => u.Password, opt => opt.MapFrom(u2 => provider.Protect(u2.Password)));
+
+            CreateMap<FishPrice, FishPriceUpdateDto>().
+             ForMember(u => u.Price, opt => opt.MapFrom(u2 => u2.Price));
+
         }
     }
 }

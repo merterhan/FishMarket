@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FishMarket.DataAccess.Migrations
 {
     [DbContext(typeof(FishMarketContext))]
-    [Migration("20220627180251_Initial")]
+    [Migration("20220628112440_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,8 @@ namespace FishMarket.DataAccess.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            MySqlModelBuilderExtensions.HasCharSet(modelBuilder, "utf8mb4", DelegationModes.ApplyToAll);
 
             modelBuilder.Entity("FishMarket.Entities.Concrete.Fish", b =>
                 {
@@ -45,7 +47,7 @@ namespace FishMarket.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Fish");
+                    b.ToTable("Fish", (string)null);
                 });
 
             modelBuilder.Entity("FishMarket.Entities.Concrete.FishPrice", b =>
@@ -76,7 +78,7 @@ namespace FishMarket.DataAccess.Migrations
 
                     b.HasIndex("FishId");
 
-                    b.ToTable("FishPrice");
+                    b.ToTable("FishPrice", (string)null);
                 });
 
             modelBuilder.Entity("FishMarket.Entities.Concrete.User", b =>
@@ -92,7 +94,7 @@ namespace FishMarket.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Password")
@@ -103,24 +105,19 @@ namespace FishMarket.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("68b025b8-595c-4d3b-a5f9-f59c4e098b57"),
-                            CreatedOn = new DateTime(2022, 6, 27, 21, 2, 51, 364, DateTimeKind.Local).AddTicks(138),
+                            Id = new Guid("43e6f40a-626b-4de4-b0b0-3f908ea73965"),
+                            CreatedOn = new DateTime(2022, 6, 28, 14, 24, 39, 596, DateTimeKind.Local).AddTicks(3860),
                             Email = "info@cagrierhan.com",
-                            IsActive = true,
+                            EmailConfirmed = true,
                             Password = "12345",
-                            PasswordSalt = "",
-                            Username = "administrator"
+                            PasswordSalt = ""
                         });
                 });
 

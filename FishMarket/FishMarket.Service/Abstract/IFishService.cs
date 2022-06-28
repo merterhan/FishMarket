@@ -1,13 +1,14 @@
-﻿using FishMarket.Entities.Concrete;
+﻿using FishMarket.Dto;
+using FishMarket.Entities.Concrete;
 
 namespace FishMarket.Service.Abstract
 {
     public interface IFishService
     {
-        Task<List<Fish>> GetList();
-        Task<List<Fish>> GetListAsNoTracking();
-        Task<Fish> Add(Fish department);
-        Task<int> Update(Fish department);
+        Task<List<Fish>> GetListAsync();
+        Task<List<Fish>> GetListAsNoTrackingAsync();
+        Task<Fish> AddAsync(FishInsertDto fishInsertDto);
+        Task<int> UpdateAsync(Fish fish);
         Task<int>Delete(Guid id);
     }
 }

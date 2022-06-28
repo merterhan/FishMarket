@@ -1,5 +1,5 @@
-﻿using FishMarket.Dto;
-using FishMarket.Entities.Concrete;
+﻿using AutoMapper;
+using FishMarket.Dto;
 using FishMarket.Service.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +11,10 @@ namespace FishMarket.Api.Controllers
     {
         private readonly ILogger<FishMarketController> _logger;
         private readonly IFishService _fishManager;
+        private readonly IFishPriceService _fishPriceManager;
         private readonly IUserService _userService;
-        
+        private readonly IMapper _mapper;
+
 
         public FishMarketController(IServiceScopeFactory serviceProvider)
         {
@@ -20,24 +22,30 @@ namespace FishMarket.Api.Controllers
             {
                 _logger = scope.ServiceProvider.GetRequiredService<ILogger<FishMarketController>>();
                 _fishManager = scope.ServiceProvider.GetRequiredService<IFishService>();
+                _fishPriceManager = scope.ServiceProvider.GetRequiredService<IFishPriceService>();
                 _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
-                
-
+                _mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
             }
         }
         [HttpPost, Route("Insert")]
-        public async Task<IActionResult> Insert([FromBody] UserLoginDto userLoginDto)
+        public async Task<IActionResult> Insert([FromBody] FishInsertDto fishInsertDto)
         {
-            var fish = new Fish
+            var result = await _fishManager.AddAsync(fishInsertDto);
+            
+            return Ok(new InsertFishResponseDto
             {
-                Id = Guid.NewGuid(),
-                Type = "Lüfer",
-                CreatedBy = Guid.NewGuid(),
-                CreatedOn = DateTime.Now
 
-            };
-            await _fishManager.Add(fish);
-            return Ok(fish);
+                Id = result.Id,
+                Price = fishInsertDto.Price,
+                Type = result.Type
+            });
+        }
+
+        [HttpPatch, Route("UpdateFishPrice/{FishId}/{Price}")]
+        public async Task<IActionResult> UpdateFishPrice([FromRoute] FishPriceUpdateDto fishUpdateDto)
+        {
+            await _fishPriceManager.UpdateFishPriceAsync(fishUpdateDto);
+            return Ok();
         }
     }
 }
