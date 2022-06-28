@@ -2,7 +2,6 @@
 using FishMarket.Dto;
 using FishMarket.Entities.Concrete;
 using FishMarket.Service.Abstract;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FishMarket.Service.Concrete
 {
@@ -11,23 +10,32 @@ namespace FishMarket.Service.Concrete
         private readonly IUserDal _userDal;
         private readonly ITokenService _tokenManager;
         private readonly IUtilityService _utilityService;
-
         public UserManager(ITokenService tokenManager, IUserDal userDal, IUtilityService utilityService)
         {
             _tokenManager = tokenManager;
             _userDal = userDal;
             _utilityService = utilityService;
         }
-       
-        
+
+
         public async Task<User> Add(User user)
         {
-            var passwordWithSalt = _utilityService.GetHashedPasswordWithSalt(user.Password);
-            user.Password = (string)passwordWithSalt["hashedPassword"];
-            user.PasswordSalt = (string)passwordWithSalt["salt"];
+            try
+            {
+                var passwordWithSalt = _utilityService.GetHashedPasswordWithSalt(user.Password);
 
-            await _userDal.Add(user);
-            return user;
+                user.Password = passwordWithSalt["hashedPassword"].ToString();
+
+                user.PasswordSalt = passwordWithSalt["salt"].ToString();
+
+                await _userDal.Add(user);
+                return user;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
         }
 
         public async Task<int> Delete(Guid id)
@@ -52,12 +60,25 @@ namespace FishMarket.Service.Concrete
 
         public async Task<string> Login(UserLoginDto userLoginDto)
         {
-            var user = await _userDal.Get(w => w.Email == userLoginDto.Email && w.Password == userLoginDto.Password);
-            if (user != null)
+            var user = await _userDal.Get(w => w.Email == userLoginDto.Email);
+
+            if (user == null)
             {
-                return _tokenManager.GetToken(user.Email);
+                return "User Not Found";
             }
-            return null;
+            else
+            {
+                var hashedPassword = _utilityService.VerifyPassword(userLoginDto.Password, user.PasswordSalt, user.Password);
+                switch (hashedPassword)
+                {
+                    case true:
+                        return _tokenManager.GetToken(user.Email);
+                    case false:
+                        return "Wrong Password";
+                }
+
+            }
+
         }
     }
 }

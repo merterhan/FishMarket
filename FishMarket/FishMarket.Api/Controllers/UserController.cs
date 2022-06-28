@@ -12,6 +12,8 @@ namespace FishMarket.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IUtilityService _utilityService;
+        
 
         private readonly ILogger<FishMarketController> _logger;
         private readonly IMapper _mapper;
@@ -23,7 +25,7 @@ namespace FishMarket.Api.Controllers
                 _logger = scope.ServiceProvider.GetRequiredService<ILogger<FishMarketController>>();
                 _mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
                 _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
-
+                _utilityService = scope.ServiceProvider.GetRequiredService<IUtilityService>();
             }
         }
 
@@ -43,7 +45,7 @@ namespace FishMarket.Api.Controllers
         [HttpPost, Route("Login")]
         public async Task<IActionResult> Login(UserLoginDto userLoginDto)
         {
-            var token = _userService.Login(userLoginDto);
+            var token = await _userService.Login(userLoginDto);
             return Ok(token);
         }
 

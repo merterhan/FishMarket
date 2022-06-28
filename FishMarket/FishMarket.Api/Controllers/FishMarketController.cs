@@ -34,7 +34,6 @@ namespace FishMarket.Api.Controllers
             
             return Ok(new InsertFishResponseDto
             {
-
                 Id = result.Id,
                 Price = fishInsertDto.Price,
                 Type = result.Type

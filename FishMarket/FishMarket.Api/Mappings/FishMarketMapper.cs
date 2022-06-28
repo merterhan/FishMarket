@@ -10,9 +10,9 @@ namespace FishMarket.Api.Mappings
         public FishMarketMapper(IDataProtector provider)
         {
             CreateMap<User, UserRegisterDto>().
-              ForMember(u => u.Password, opt => opt.MapFrom(u2 => provider.Unprotect(u2.Password)));
+              ForMember(u => u.Password, opt => opt.MapFrom(u2 => u2.Password));
             CreateMap<UserRegisterDto, User>().
-              ForMember(u => u.Password, opt => opt.MapFrom(u2 => provider.Protect(u2.Password)));
+              ForMember(u => u.Password, opt => opt.MapFrom(u2 => u2.Password));
 
             CreateMap<FishPrice, FishPriceUpdateDto>().
              ForMember(u => u.Price, opt => opt.MapFrom(u2 => u2.Price));
