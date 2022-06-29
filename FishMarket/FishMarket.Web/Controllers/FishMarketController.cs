@@ -26,30 +26,15 @@ namespace FishMarket.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var result = await _userService.Login(new Dto.UserLoginDto { Email = "info@cagrierhan.com", Password = "12345" });
-            return View(result);
+            return View();
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        public async Task<IActionResult> List()
         {
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
-            {
-                return RedirectToAction("index", "home");
-            }
-            var user = await _userService.Get(new Guid(userId));
+            var result = await _fishMarketClient.ListFishes();
+            return View(result);
 
-            if (user == null)
-            {
-                ViewBag.ErrorMessage =$"The UserId {userId} is invalid";
-                return View("NotFound");
-            }
-            _userService.ConfirmEmailAsync(user, token);
-            return null;
-        }
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

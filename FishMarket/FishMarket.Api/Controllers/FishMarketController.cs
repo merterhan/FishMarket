@@ -14,6 +14,7 @@ namespace FishMarket.Api.Controllers
         private readonly ILogger<FishMarketController> _logger;
         private readonly IFishService _fishManager;
         private readonly IFishPriceService _fishPriceManager;
+
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
@@ -53,7 +54,7 @@ namespace FishMarket.Api.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet, Route("GetList")]
+        [HttpGet, Route("ListFishes")]
         public async Task<List<FishDto>> ListFishes()
         {
             var fishes = await _fishManager.ListFishesAsync();

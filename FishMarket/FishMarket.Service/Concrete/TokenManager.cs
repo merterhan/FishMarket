@@ -14,11 +14,12 @@ namespace FishMarket.Service.Concrete
         }
         public string GetToken(string email)
         {
-
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes("PaneraTechFishMarket");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
+                Issuer = "http://cagrierhan.com",
+                Audience = "cagrierhan.com",
                 Subject = new ClaimsIdentity(new[] { new Claim("email", email) }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 NotBefore = DateTime.UtcNow,

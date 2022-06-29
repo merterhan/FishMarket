@@ -26,8 +26,8 @@ namespace FishMarket.DataAccess.Concrete.EntityFrameworkCore
                 .HasData(new User
                 {
                     Id = Guid.NewGuid(),
-                    Password = "12345",
-                    PasswordSalt = String.Empty,
+                    Password = "F118A7EEF3641C3AC9E4D9176F5F1518D658AC674FFF113E22C7C9F74A2B7733",
+                    PasswordSalt = "716c4bab-92b6-44c2-8d34-522357c5a685",
                     Email = "info@cagrierhan.com",
                     EmailConfirmed = true,
                     CreatedOn = DateTime.Now
@@ -36,6 +36,13 @@ namespace FishMarket.DataAccess.Concrete.EntityFrameworkCore
             modelBuilder.Entity<FishPrice>()
             .HasOne(f => f.Fish)
             .WithMany(fp => fp.FishPrices);
+
+            modelBuilder.Entity<FishPrice>().Property(e => e.Price).HasPrecision(10, 2);
+
+            modelBuilder.Entity<FishPrice>()
+              .Ignore(i => i.CreatedBy)
+              .Ignore(i => i.ChangedOn)
+              .Ignore(i => i.ChangedBy);
 
             //modelBuilder.Entity<User>(UserConfiguration.ConfigureUserEntity);
             //modelBuilder.Entity<Fish>(FishConfiguration.ConfigureFishEntity);

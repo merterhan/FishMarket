@@ -9,10 +9,13 @@ namespace FishMarket.Client
         [Post("/FishMarket/Insert")]
         Task<IActionResult> Insert([Body] FishInsertDto fishInsertDto);
 
-        [Delete("DeleteFishPrice/{FishId}/")]
+        [Delete("/FishMarket/DeleteFishPrice/{FishId}")]
         Task<IActionResult> DeleteFishPrice([AliasAs("FishId")] Guid fishId);
 
-        [Patch("UpdateFishPrice/{FishId}/{Price}")]
-        Task<IActionResult> UpdateFishPrice([Body] FishPriceUpdateDto fishUpdateDto);
+        [Patch("/FishMarket/UpdateFishPrice/{FishId}/{Price}")]
+        Task<IActionResult> UpdateFishPrice([Body] Guid fishId, int price);
+
+        [Get("/FishMarket/ListFishes")]
+        Task<List<FishDto>> ListFishes();
     }
 }

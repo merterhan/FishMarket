@@ -1,5 +1,7 @@
 ﻿using FishMarket.Client;
+using FishMarket.Dto;
 using FishMarket.Service.Abstract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FishMarket.Web.Controllers
@@ -18,9 +20,33 @@ namespace FishMarket.Web.Controllers
                 _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
             }
         }
-        public Task<IActionResult> Login()
+        public IActionResult Login()
         {
-            var result = _userService.Login(new Dto.UserLoginDto { Email = "info@cagrierhan.com", Password = "12345" });
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(UserLoginDto userLoginDto)
+        {
+            var result = await _userService.Login(new Dto.UserLoginDto { Email = userLoginDto.Email, Password = userLoginDto.Password });
+            return Json(result);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("index", "home");
+            }
+            var user = await _userService.Get(new Guid(userId));
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"The UserId {userId} is invalid";
+                return View("NotFound");
+            }
+            _userService.ConfirmEmailAsync(user, token);
             return null;
         }
     }
