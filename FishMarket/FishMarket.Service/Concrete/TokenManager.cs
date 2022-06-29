@@ -28,10 +28,10 @@ namespace FishMarket.Service.Concrete
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-        public int? ValidateToken(string token)
+        public bool ValidateToken(string token, string email)
         {
             if (token == null)
-                return null;
+                return false;
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes("PaneraTechFishMarket");
@@ -47,13 +47,13 @@ namespace FishMarket.Service.Concrete
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+                var jwtEmail = jwtToken.Claims.First(x => x.Type == "email").Value;
 
-                return userId;
+                return email == jwtEmail;
             }
             catch
             {
-                return null;
+                return false;
             }
         }
     }

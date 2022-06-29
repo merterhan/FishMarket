@@ -1,0 +1,25 @@
+﻿@model List<FishMarket.Dto.FishDto>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Type</th>
+            <th scope="col">Price</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var fish in Model)
+        {
+            <tr>
+                <th colspan="1">@fish.Type</th>
+                <td colspan="1">@fish.Price</td>
+                <td colspan="1">Edit</td>
+                <td colspan="1">Delete</td>
+
+            </tr>
+        }
+    </tbody>
+</table>

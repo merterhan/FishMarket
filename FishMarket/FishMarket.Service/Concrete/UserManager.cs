@@ -1,5 +1,6 @@
 ﻿using FishMarket.DataAccess.Abstract;
 using FishMarket.Dto;
+using FishMarket.Dto.ServiceResponseDtos;
 using FishMarket.Entities.Concrete;
 using FishMarket.Service.Abstract;
 
@@ -16,9 +17,7 @@ namespace FishMarket.Service.Concrete
             _userDal = userDal;
             _utilityService = utilityService;
         }
-
-
-        public async Task<User> Add(User user)
+        public async Task<string> Add(User user)
         {
             try
             {
@@ -29,11 +28,12 @@ namespace FishMarket.Service.Concrete
                 user.PasswordSalt = passwordWithSalt["salt"].ToString();
 
                 var result = await _userDal.Add(user);
-                //if (result.Succeeded)
-                //{
 
-                //}
-                return user;
+                var token = _tokenManager.GetToken(user.Email);
+
+                var confirmAccountLink = new Uri("http://localhost:5067/User/ConfirmEmail?email=" + user.Email + "&token=" + token);
+
+                return confirmAccountLink.ToString();
             }
             catch (Exception e)
             {
@@ -62,13 +62,17 @@ namespace FishMarket.Service.Concrete
             return await _userDal.GetList();
         }
 
-        public async Task<string> Login(UserLoginDto userLoginDto)
+        public async Task<UserLoginResponseDto> Login(UserLoginDto userLoginDto)
         {
             var user = await _userDal.Get(w => w.Email == userLoginDto.Email);
 
             if (user == null)
             {
-                return "User Not Found";
+                return new UserLoginResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "User Not Found"
+                };
             }
             else
             {
@@ -76,9 +80,20 @@ namespace FishMarket.Service.Concrete
                 switch (hashedPassword)
                 {
                     case true:
-                        return _tokenManager.GetToken(user.Email);
+                        return new UserLoginResponseDto
+                        {
+                            Id = user.Id,
+                            Email = user.Email,
+                            Token = _tokenManager.GetToken(user.Email),
+                            IsSuccess = true,
+                            Message = "Login Successful"
+                        };
                     case false:
-                        return "Wrong Password";
+                        return new UserLoginResponseDto
+                        {
+                            IsSuccess = false,
+                            Message = "Wrong Password"
+                        };
                 }
 
             }
@@ -95,9 +110,28 @@ namespace FishMarket.Service.Concrete
             return _userDal.Get(w => w.Id == userId);
         }
 
-        public void ConfirmEmailAsync(User user, string token)
+        public async Task<BaseResponse> ConfirmUserEmail(string email)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userDal.Get(w => w.Email == email);
+                user.EmailConfirmed = true;
+                var result = await _userDal.Update(user);
+
+                if (result != 0)
+                {
+                    return new BaseResponse { IsSuccess = true, Message = "Email Confirmed" };
+                }
+                else
+                {
+                    return new BaseResponse { IsSuccess = true, Message = "Email Confirmation Failed" };
+                }
+            }
+            catch (Exception e)
+            {
+
+                return new BaseResponse { IsSuccess = false, Message = e.Message };
+            }
         }
     }
 }

@@ -3,6 +3,6 @@
     public interface ITokenService
     {
         string GetToken(string email);
-        int? ValidateToken(string token);
+        bool ValidateToken(string token, string email);
     }
 }

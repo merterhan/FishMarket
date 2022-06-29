@@ -1,53 +1,62 @@
-﻿using FishMarket.Client;
-using FishMarket.Dto;
+﻿using FishMarket.Dto;
 using FishMarket.Service.Abstract;
+using FishMarket.Web.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FishMarket.Web.Controllers
+namespace FishMarket.Web.Controllers;
+
+public class UserController : Controller
 {
-    public class UserController : Controller
+    private readonly ILogger<UserController> _logger;
+    private readonly IUserService _userService;
+    private readonly ITokenService _tokenManager;
+    private readonly ISessionService _sessionService;
+
+
+    public UserController(IServiceScopeFactory serviceScopeFactory)
     {
-        private readonly ILogger<UserController> _logger;
-        private readonly IUserService _userService;
-
-
-        public UserController(IServiceScopeFactory serviceScopeFactory)
+        using (var scope = serviceScopeFactory.CreateScope())
         {
-            using (var scope = serviceScopeFactory.CreateScope())
-            {
-                _logger = scope.ServiceProvider.GetRequiredService<ILogger<UserController>>();
-                _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
-            }
+            _logger = scope.ServiceProvider.GetRequiredService<ILogger<UserController>>();
+            _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+            _tokenManager = scope.ServiceProvider.GetRequiredService<ITokenService>();
+            _sessionService = scope.ServiceProvider.GetRequiredService<ISessionService>();
         }
-        public IActionResult Login()
+    }
+    public IActionResult Login()
+    {
+        if (_sessionService.GetUser() != null)
         {
-            return View();
+            return RedirectToAction("Edit","FishMarket");
         }
+        return View();
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> Login(UserLoginDto userLoginDto)
+    public IActionResult Logout()
+    {
+        _sessionService.ClearSession();
+        return RedirectToAction("Login","User");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Login(UserLoginDto userLoginDto)
+    {
+        var result = await _userService.Login(new UserLoginDto { Email = userLoginDto.Email, Password = userLoginDto.Password });
+        if (result.IsSuccess)
         {
-            var result = await _userService.Login(new Dto.UserLoginDto { Email = userLoginDto.Email, Password = userLoginDto.Password });
-            return Json(result);
+            _sessionService.SetUser(result);
         }
+        return RedirectToAction("Edit", "FishMarket");
+        //return Json(result);
+    }
 
-        [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmail(string userId, string token)
-        {
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
-            {
-                return RedirectToAction("index", "home");
-            }
-            var user = await _userService.Get(new Guid(userId));
+    [AllowAnonymous]
+    public async Task<IActionResult> ConfirmEmail(string email, string token)
+    {
+        _tokenManager.ValidateToken(token, email);
+        var result = await _userService.ConfirmUserEmail(email);
+        return Json(result);
 
-            if (user == null)
-            {
-                ViewBag.ErrorMessage = $"The UserId {userId} is invalid";
-                return View("NotFound");
-            }
-            _userService.ConfirmEmailAsync(user, token);
-            return null;
-        }
     }
 }
