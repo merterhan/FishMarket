@@ -1,6 +1,7 @@
 ﻿using FishMarket.DataAccess.Abstract;
 using FishMarket.Dto;
 using FishMarket.Dto.ServiceResponseDtos;
+using FishMarket.Entities.Concrete;
 using FishMarket.Service.Abstract;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,17 +24,15 @@ namespace FishMarket.Service.Concrete
            return await _fishPriceDal.Delete(id);
         }
 
-        public async Task<FishPriceUpdateApiResponseDto> UpdateFishPriceAsync(FishPriceUpdateDto fishPriceUpdateDto)
+        public async Task<FishPriceUpdateApiResponseDto> UpdateFishPriceAsync(FishPrice fishPrice)
         {
-            var fishprice = _fishPriceDal.GetList(w => w.FishId == fishPriceUpdateDto.FishId).Result.OrderByDescending(o => o.CreatedOn).FirstOrDefault();
-            var result = await _fishPriceDal.Update(fishprice);
+            fishPrice.CreatedOn = DateTime.Now;
+            var result = await _fishPriceDal.Add(fishPrice);
 
             return new FishPriceUpdateApiResponseDto
             {
-                Id = fishprice.Id,
-                Price = fishprice.Price,
-                Type = fishprice.Fish.Type,
-                ChangedOn = fishprice.ChangedOn,
+                Id = fishPrice.Id,
+                Price = fishPrice.Price,
                 Message = "Güncelleme Başarılı",
                 IsSuccess = true
             };

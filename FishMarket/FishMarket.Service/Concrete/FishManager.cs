@@ -49,7 +49,11 @@ namespace FishMarket.Service.Concrete
 
         public async Task<int> Delete(Guid id)
         {
-            return await _fishDal.Delete(id);
+            var fishPrices = await _fishPriceDal.GetList(x => x.FishId == id);
+            _fishPriceDal.RemoveRange(fishPrices);
+
+            var result = await _fishDal.Delete(id);
+            return result;
         }
 
         public async Task<List<Fish>> GetListAsync()

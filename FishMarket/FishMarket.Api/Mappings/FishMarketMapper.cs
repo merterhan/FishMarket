@@ -16,6 +16,7 @@ namespace FishMarket.Api.Mappings
 
             CreateMap<FishPrice, FishPriceUpdateDto>().
              ForMember(u => u.Price, opt => opt.MapFrom(u2 => u2.Price));
+            CreateMap<FishPriceUpdateDto, FishPrice>();
 
         }
     }

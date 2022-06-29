@@ -19,5 +19,6 @@ namespace FishMarket.Core
         Task<int> Delete(T entity);
 
         Task<int> Delete(Guid id);
+        void RemoveRange(IEnumerable<T> entities);
     }
 }

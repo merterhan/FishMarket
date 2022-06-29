@@ -11,16 +11,22 @@ namespace FishMarket.DataAccess.Concrete.EntityFrameworkCore
             optionsBuilder.UseMySql(@"Server=cagrierhan.com;Database=cagrierh_FishMarketDB;Uid=cagrierh_sa;Pwd=P2!ZW.n4;",
                 new MySqlServerVersion(new Version(5, 7, 37)));
             base.OnConfiguring(optionsBuilder);
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasCharSet(CharSet.Utf8Mb4, DelegationModes.ApplyToAll);
 
+            #region User EntityConfiguration
             modelBuilder.Entity<User>()
-                .Ignore(i => i.CreatedBy)
-                .Ignore(i => i.ChangedOn)
-                .Ignore(i => i.ChangedBy);
+             .Ignore(i => i.CreatedBy)
+             .Ignore(i => i.ChangedOn)
+             .Ignore(i => i.ChangedBy);
+
+            modelBuilder.Entity<User>().Property(e => e.Email).HasMaxLength(50);
+
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
 
             modelBuilder.Entity<User>()
                 .HasData(new User
@@ -32,10 +38,21 @@ namespace FishMarket.DataAccess.Concrete.EntityFrameworkCore
                     EmailConfirmed = true,
                     CreatedOn = DateTime.Now
                 });
+            #endregion
 
-            modelBuilder.Entity<FishPrice>()
-            .HasOne(f => f.Fish)
-            .WithMany(fp => fp.FishPrices);
+            #region Fish EntityConfiguraiton
+            //modelBuilder.Entity<FishPrice>()
+            //.HasOne(f => f.Fish)
+            //.WithMany(fp => fp.FishPrices).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Fish>()
+            .HasMany(c => c.FishPrices)
+            .WithOne(e => e.Fish).OnDelete(DeleteBehavior.Cascade);
+
+
+            modelBuilder.Entity<Fish>().Property(e => e.Type).HasMaxLength(50);
+
+            modelBuilder.Entity<Fish>().HasIndex(u => u.Type).IsUnique();
 
             modelBuilder.Entity<FishPrice>().Property(e => e.Price).HasPrecision(10, 2);
 
@@ -43,6 +60,9 @@ namespace FishMarket.DataAccess.Concrete.EntityFrameworkCore
               .Ignore(i => i.CreatedBy)
               .Ignore(i => i.ChangedOn)
               .Ignore(i => i.ChangedBy);
+            #endregion
+
+
 
             //modelBuilder.Entity<User>(UserConfiguration.ConfigureUserEntity);
             //modelBuilder.Entity<Fish>(FishConfiguration.ConfigureFishEntity);

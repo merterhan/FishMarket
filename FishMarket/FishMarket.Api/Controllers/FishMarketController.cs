@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FishMarket.Dto;
+using FishMarket.Entities.Concrete;
 using FishMarket.Service.Abstract;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -49,7 +50,8 @@ namespace FishMarket.Api.Controllers
         [HttpPatch, Route("UpdateFishPrice/{FishId}/{Price}")]
         public async Task<IActionResult> UpdateFishPrice([FromRoute] FishPriceUpdateDto fishUpdateDto)
         {
-            await _fishPriceManager.UpdateFishPriceAsync(fishUpdateDto);
+            var model = _mapper.Map<FishPrice>(fishUpdateDto);
+            await _fishPriceManager.UpdateFishPriceAsync(model);
             return Ok();
         }
 
@@ -62,10 +64,10 @@ namespace FishMarket.Api.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpDelete, Route("DeleteFishPrice/{FishId}/")]
+        [HttpDelete, Route("DeleteFish/{fishId}/")]
         public async Task<IActionResult> DeleteFishPrice([FromRoute] Guid fishId)
         {
-            await _fishPriceManager.DeleteFishPrice(fishId);
+            await _fishManager.Delete(fishId);
             return Ok();
         }
     }

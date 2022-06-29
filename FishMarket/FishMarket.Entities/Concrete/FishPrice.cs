@@ -6,7 +6,7 @@ namespace FishMarket.Entities.Concrete
     {
         public virtual Fish Fish { get; set; }
 
-        [ForeignKey("UserRoleId")]
+        [ForeignKey("FishId")]
         public Guid FishId { get; set; }
         public decimal Price { get; set; }
     }

@@ -29,6 +29,15 @@ namespace FishMarket.Core.EntityFrameworkCore
             }
         }
 
+        public void RemoveRange(IEnumerable<TEntity> entities)
+        {
+            using (var context = new TContext())
+            {     
+                context.RemoveRange(entities);
+            }
+        }
+
+
         public async Task<int> Delete(TEntity entity)
         {
             using (var context = new TContext())
