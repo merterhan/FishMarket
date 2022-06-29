@@ -66,5 +66,20 @@ namespace FishMarket.Service.Concrete
         {
             return await _fishDal.GetList();
         }
+        
+        public async Task<List<FishDto>> ListFishesAsync()
+        {
+            var result = (from f in await _fishDal.GetListAsNoTracking()
+                          join p in await _fishPriceDal.GetListAsNoTracking() on f.Id equals p.FishId into fGroup
+                          from p in fGroup.OrderByDescending(d=>d.ChangedOn).Take(1)
+                          select new FishDto
+                          {
+                              Id = f.Id,
+                              Type = f.Type,
+                              Price = p.Price
+                          }).ToList();
+            
+            return  result;
+        }
     }
 }

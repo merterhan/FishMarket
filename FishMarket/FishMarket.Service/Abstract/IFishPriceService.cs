@@ -1,11 +1,12 @@
 ﻿using FishMarket.Dto;
-using FishMarket.Entities.Concrete;
+using FishMarket.Dto.ServiceResponseDtos;
 
 namespace FishMarket.Service.Abstract
 {
     public interface IFishPriceService
     {
-        Task<FishPrice> UpdateFishPriceAsync(FishPriceUpdateDto fish);
+        Task<FishPriceUpdateApiResponseDto> UpdateFishPriceAsync(FishPriceUpdateDto fish);
+        Task<int> DeleteFishPrice(Guid id);
 
     }
 }

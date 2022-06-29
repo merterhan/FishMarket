@@ -6,4 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FishMarket.Client\FishMarket.Client.csproj" />
+    <ProjectReference Include="..\FishMarket.Service\FishMarket.Service.csproj" />
+  </ItemGroup>
+
 </Project>

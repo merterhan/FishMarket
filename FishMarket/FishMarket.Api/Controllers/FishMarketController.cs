@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FishMarket.Dto;
 using FishMarket.Service.Abstract;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FishMarket.Api.Controllers
@@ -27,6 +29,8 @@ namespace FishMarket.Api.Controllers
                 _mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
             }
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost, Route("Insert")]
         public async Task<IActionResult> Insert([FromBody] FishInsertDto fishInsertDto)
         {
@@ -40,10 +44,27 @@ namespace FishMarket.Api.Controllers
             });
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPatch, Route("UpdateFishPrice/{FishId}/{Price}")]
         public async Task<IActionResult> UpdateFishPrice([FromRoute] FishPriceUpdateDto fishUpdateDto)
         {
             await _fishPriceManager.UpdateFishPriceAsync(fishUpdateDto);
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpGet, Route("GetList")]
+        public async Task<List<FishDto>> ListFishes()
+        {
+            var fishes = await _fishManager.ListFishesAsync();
+            return fishes;
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpDelete, Route("DeleteFishPrice/{FishId}/")]
+        public async Task<IActionResult> DeleteFishPrice([FromRoute] Guid fishId)
+        {
+            await _fishPriceManager.DeleteFishPrice(fishId);
             return Ok();
         }
     }

@@ -28,7 +28,11 @@ namespace FishMarket.Service.Concrete
 
                 user.PasswordSalt = passwordWithSalt["salt"].ToString();
 
-                await _userDal.Add(user);
+                var result = await _userDal.Add(user);
+                //if (result.Succeeded)
+                //{
+
+                //}
                 return user;
             }
             catch (Exception e)
@@ -79,6 +83,21 @@ namespace FishMarket.Service.Concrete
 
             }
 
+        }
+
+        public Task<string> GenerateEmailConfirmationTokenAsync(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> Get(Guid userId)
+        {
+            return _userDal.Get(w => w.Id == userId);
+        }
+
+        public void ConfirmEmailAsync(User user, string token)
+        {
+            throw new NotImplementedException();
         }
     }
 }

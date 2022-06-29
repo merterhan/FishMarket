@@ -10,5 +10,6 @@ namespace FishMarket.Service.Abstract
         Task<Fish> AddAsync(FishInsertDto fishInsertDto);
         Task<int> UpdateAsync(Fish fish);
         Task<int>Delete(Guid id);
+        Task<List<FishDto>> ListFishesAsync();
     }
 }

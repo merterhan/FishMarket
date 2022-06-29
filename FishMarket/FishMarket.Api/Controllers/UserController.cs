@@ -2,6 +2,7 @@
 using FishMarket.Dto;
 using FishMarket.Entities.Concrete;
 using FishMarket.Service.Abstract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FishMarket.Api.Controllers
@@ -42,14 +43,15 @@ namespace FishMarket.Api.Controllers
             return Ok(user);
         }
 
+        [AllowAnonymous]
         [HttpPost, Route("Login")]
-        public async Task<IActionResult> Login(UserLoginDto userLoginDto)
+        public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
         {
             var token = await _userService.Login(userLoginDto);
             return Ok(token);
         }
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [AllowAnonymous]
         [HttpPost, Route("Register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto)
         {

@@ -11,5 +11,9 @@ namespace FishMarket.Service.Abstract
         Task<User> Add(User user);
         Task<int> Update(User user);
         Task<int> Delete(Guid id);
+        Task<User> Get(Guid userId);
+
+        Task<string> GenerateEmailConfirmationTokenAsync(User user);
+        void ConfirmEmailAsync(User user, string token);
     }
 }
