@@ -32,6 +32,12 @@ namespace FishMarket.Api.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Creates a new fish with its price
+        /// </summary>
+        /// <param name="fishInsertDto"></param>
+        /// <returns></returns>
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost, Route("Insert")]
         public async Task<IActionResult> Insert([FromBody] FishInsertDto fishInsertDto)
@@ -46,6 +52,13 @@ namespace FishMarket.Api.Controllers
             });
         }
 
+
+        /// <summary>
+        /// Updates the price of given fish
+        /// </summary>
+        /// <param name="fishUpdateDto"></param>
+        /// <returns></returns>
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPatch, Route("UpdateFishPrice/{FishId}/{Price}")]
         public async Task<IActionResult> UpdateFishPrice([FromRoute] FishPriceUpdateDto fishUpdateDto)
@@ -55,6 +68,10 @@ namespace FishMarket.Api.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Lists all fishes with their most-recent prices
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet, Route("ListFishes")]
         public async Task<List<FishDto>> ListFishes()
@@ -63,6 +80,11 @@ namespace FishMarket.Api.Controllers
             return fishes;
         }
 
+        /// <summary>
+        /// Deletes the fish and it's all prices in table
+        /// </summary>
+        /// <param name="fishId"></param>
+        /// <returns></returns>
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete, Route("DeleteFish/{FishId}")]
         public async Task<IActionResult> DeleteFish([FromRoute] Guid fishId)

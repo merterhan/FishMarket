@@ -1,5 +1,6 @@
 ﻿using FishMarket.Service.Abstract;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
 using System.Collections;
 using System.Security.Cryptography;
@@ -10,15 +11,16 @@ namespace FishMarket.Service.Concrete
 {
     public class UtilityManager : IUtilityService
     {
-        IConfiguration _configuration;
-        private readonly string _encryptPublicKey, _encryptSecretKey;
-        public UtilityManager(IConfiguration configuration)
+        private readonly IConfiguration _configuration;
+        private string _encryptPublicKey;
+        private readonly IDataProtectionProvider _dataProtectionProvider;
+        //private const string Key = "cut-the-night-with-the-light";
+        public UtilityManager(IConfiguration configuration, IDataProtectionProvider dataProtectionProvider)
         {
             _configuration = configuration;
+            _dataProtectionProvider = dataProtectionProvider;
             _encryptPublicKey = _configuration.GetSection("EncryptPublicKey").Value;
-            _encryptSecretKey = _configuration.GetSection("EncryptSecretKey").Value;
         }
-
 
         public Hashtable GetHashedPasswordWithSalt(string password)
         {
@@ -58,68 +60,16 @@ namespace FishMarket.Service.Concrete
             return password == hash;
         }
 
-        public string EncryptString(string textToEncrypt)
+        public string Encrypt(string input)
         {
-            try
-            {
-                string ToReturn = string.Empty;
-                string publickey = _encryptPublicKey, secretkey = _encryptSecretKey;
-
-                byte[] secretkeyByte = { };
-                secretkeyByte = Encoding.UTF8.GetBytes(secretkey);
-                byte[] publickeybyte = { };
-                publickeybyte = Encoding.UTF8.GetBytes(publickey);
-                MemoryStream ms = null;
-                CryptoStream cs = null;
-                byte[] inputbyteArray = System.Text.Encoding.UTF8.GetBytes(textToEncrypt);
-                using (DESCryptoServiceProvider des = new DESCryptoServiceProvider())
-                {
-                    ms = new MemoryStream();
-                    cs = new CryptoStream(ms, des.CreateEncryptor(publickeybyte, secretkeyByte), CryptoStreamMode.Write);
-                    cs.Write(inputbyteArray, 0, inputbyteArray.Length);
-                    cs.FlushFinalBlock();
-                    ToReturn = Convert.ToBase64String(ms.ToArray());
-                }
-                return ToReturn;
-            }
-            catch (Exception ex)
-            {
-
-                throw new Exception(ex.Message, ex.InnerException);
-            }
-
-            return string.Empty;
+            var protector = _dataProtectionProvider.CreateProtector(_encryptPublicKey);
+            return protector.Protect(input);
         }
-        public string DecryptString(string textToDecrypt)
+
+        public string Decrypt(string input)
         {
-            try
-            {
-                string ToReturn = "";
-                string publickey = _encryptPublicKey;
-                string secretkey = "87654321";
-                byte[] privatekeyByte = { };
-                privatekeyByte = System.Text.Encoding.UTF8.GetBytes(secretkey);
-                byte[] publickeybyte = { };
-                publickeybyte = System.Text.Encoding.UTF8.GetBytes(publickey);
-                MemoryStream ms = null;
-                CryptoStream cs = null;
-                byte[] inputbyteArray = new byte[textToDecrypt.Replace(" ", "+").Length];
-                inputbyteArray = Convert.FromBase64String(textToDecrypt.Replace(" ", "+"));
-                using (DESCryptoServiceProvider des = new DESCryptoServiceProvider())
-                {
-                    ms = new MemoryStream();
-                    cs = new CryptoStream(ms, des.CreateDecryptor(publickeybyte, privatekeyByte), CryptoStreamMode.Write);
-                    cs.Write(inputbyteArray, 0, inputbyteArray.Length);
-                    cs.FlushFinalBlock();
-                    Encoding encoding = Encoding.UTF8;
-                    ToReturn = encoding.GetString(ms.ToArray());
-                }
-                return ToReturn;
-            }
-            catch (Exception ae)
-            {
-                throw new Exception(ae.Message, ae.InnerException);
-            }
+            var protector = _dataProtectionProvider.CreateProtector(_encryptPublicKey);
+            return protector.Unprotect(input);
         }
 
     }
