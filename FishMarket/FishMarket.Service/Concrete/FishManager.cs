@@ -23,13 +23,12 @@ namespace FishMarket.Service.Concrete
         }
         public async Task<Fish> AddAsync(FishInsertDto fishInsertDto)
         {
-
             var now = DateTime.Now;
 
             var fish = new Fish
             {
                 Id = Guid.NewGuid(),
-                Type = fishInsertDto.Name,
+                Type = fishInsertDto.Type,
                 CreatedOn = now
             };
 
@@ -84,6 +83,11 @@ namespace FishMarket.Service.Concrete
                           }).ToList();
             
             return  result;
+        }
+
+        public async Task<Fish> GetByIdAsync(Guid fishId)
+        {
+            return await _fishDal.Get(w=>w.Id == fishId);
         }
     }
 }

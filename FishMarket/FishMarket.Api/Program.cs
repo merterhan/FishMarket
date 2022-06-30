@@ -1,6 +1,5 @@
 using AutoMapper;
 using FishMarket.Api.Mappings;
-using FishMarket.DataAccess;
 using FishMarket.DataAccess.Abstract;
 using FishMarket.DataAccess.Concrete.EntityFrameworkCore;
 using FishMarket.Service.Abstract;

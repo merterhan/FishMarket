@@ -16,17 +16,14 @@ namespace FishMarket.Api.Controllers
         private readonly IUserService _userService;
         private readonly IUtilityService _utilityService;
         private readonly IConfiguration _configuration;
-
-
-
-        private readonly ILogger<FishMarketController> _logger;
+        private readonly ILogger<UserController> _logger;
         private readonly IMapper _mapper;
 
         public UserController(IServiceScopeFactory serviceProvider)
         {
             using (var scope = serviceProvider.CreateScope())
             {
-                _logger = scope.ServiceProvider.GetRequiredService<ILogger<FishMarketController>>();
+                _logger = scope.ServiceProvider.GetRequiredService<ILogger<UserController>>();
                 _mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
                 _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
                 _utilityService = scope.ServiceProvider.GetRequiredService<IUtilityService>();
@@ -47,8 +44,9 @@ namespace FishMarket.Api.Controllers
                 Password = _utilityService.Decrypt(_configuration.GetSection("AdminUserPassword").Value)
             };
 
-            var result =  await _userService.Login(user);
-            return result.Token; 
+            var result = await _userService.Login(user);
+            _logger.LogInformation(String.Concat("Bearer Token Generated: ", result.Token));
+            return result.Token;
         }
 
         /// <summary>
@@ -73,9 +71,18 @@ namespace FishMarket.Api.Controllers
         [HttpPost, Route("Register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto)
         {
-            var model = _mapper.Map<User>(userRegisterDto);
-            var result = await _userService.Add(model);
-            return Ok(result);
+            try
+            {
+                var model = _mapper.Map<User>(userRegisterDto);
+                var result = await _userService.Add(model);
+                _logger.LogInformation($"Go to this link to confirm your email: {result}");
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return BadRequest(e.Message);
+            }
         }
     }
 }

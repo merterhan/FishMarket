@@ -29,6 +29,8 @@ namespace FishMarket.Api.Controllers
                 _fishPriceManager = scope.ServiceProvider.GetRequiredService<IFishPriceService>();
                 _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
                 _mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
+                _logger = scope.ServiceProvider.GetRequiredService<ILogger<FishMarketController>>();
+
             }
         }
 
@@ -42,14 +44,22 @@ namespace FishMarket.Api.Controllers
         [HttpPost, Route("Insert")]
         public async Task<IActionResult> Insert([FromBody] FishInsertDto fishInsertDto)
         {
-            var result = await _fishManager.AddAsync(fishInsertDto);
-            
-            return Ok(new InsertFishResponseDto
+            try
             {
-                Id = result.Id,
-                Price = fishInsertDto.Price,
-                Type = result.Type
-            });
+                var result = await _fishManager.AddAsync(fishInsertDto);
+
+                return Ok(new InsertFishResponseDto
+                {
+                    Id = result.Id,
+                    Price = fishInsertDto.Price,
+                    Type = result.Type
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(String.Concat(ex.Message, DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")));
+                return BadRequest(ex.Message);
+            }
         }
 
 
@@ -86,11 +96,23 @@ namespace FishMarket.Api.Controllers
         /// <param name="fishId"></param>
         /// <returns></returns>
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpDelete, Route("DeleteFish/{FishId}")]
+        [HttpDelete, Route("DeleteFish/{fishId}")]
         public async Task<IActionResult> DeleteFish([FromRoute] Guid fishId)
         {
-            await _fishManager.Delete(fishId);
-            return Ok();
+            var fish = _fishManager.GetByIdAsync(fishId);
+            if (fish == null)
+                return BadRequest("Fish Not Found");
+            try
+            {
+                await _fishManager.Delete(fishId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(String.Concat(ex.Message, DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")));
+                return BadRequest(ex.Message);
+            }
+
+            return Ok(await fish);
         }
     }
 }

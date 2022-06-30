@@ -1,6 +1,6 @@
 ﻿@model List<FishMarket.Dto.FishDto>
 
-<button class="btn btn-primary">New Fish</button>
+<button onclick="$('#newFishModal').modal('show')" class="btn btn-primary">New Fish</button>
 <table class="table">
     <thead>
         <tr>
@@ -18,39 +18,63 @@
                 <th colspan="1">@fish.Type</th>
                 <td colspan="1">@fish.Price</td>
                 <td colspan="1"><button type="button" class="btn btn-primary btn-sm" onclick="Edit('@fish.Id')">Edit</button></td>
-                <td colspan="1"><button type="button" class="btn btn-primary btn-sm" onclick="Delete('@fish.Id')">Edit</button></td>
+                <td colspan="1"><button type="button" class="btn btn-danger btn-sm" onclick="Delete('@fish.Id')">Delete</button></td>
             </tr>
         }
     </tbody>
 </table>
 
-<div class="modal" tabindex="-1">
+<div id="newFishModal" class="modal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
+                <h5 class="modal-title">Create New Fish</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Modal body text goes here.</p>
+                <div class="mb-3">
+                    <label class="form-label">Type</label>
+                    <select id="Type" class="form-select" aria-label="Default select example">
+                        <option value="">Seçiniz</option>
+                        <option value="AKDENIZ MIDYESI">AKDENIZ MIDYESI</option>
+                        <option value="BARBUNYA">BARBUNYA</option>
+                        <option value="CIPURA">CIPURA</option>
+                        <option value="DIL BALIGI">DIL BALIGI</option>
+                        <option value="HAMSI">HAMSI </option>
+                        <option value="ISKORPIT">ISKORPIT</option>
+                        <option value="ISTAVRIT">ISTAVRIT</option>
+                        <option value="IZMARIT">IZMARIT </option>
+                        <option value="KALKAN">KALKAN</option>
+                        <option value="KARAGOZ">KARAGOZ </option>
+                        <option value="KEFAL">KEFAL </option>
+                        <option value="KILIC">KILIC </option>
+                        <option value="KIRLANGIC">KIRLANGIC </option>
+                        <option value="KOLYOS">KOLYOS</option>
+                        <option value="LEVREK">LEVREK</option>
+                        <option value="LUFER">LUFER </option>
+                        <option value="MEZGIT">MEZGIT</option>
+                        <option value="PALAMUT">PALAMUT </option>
+                        <option value="SARDALYA">SARDALYA</option>
+                        <option value="TARANCA">TARANCA </option>
+                        <option value="TEKIR ">TEKIR </option>
+                        <option value="USKUMRU ">USKUMRU </option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Price</label>
+
+                    <input id="Price" type="number" class="form-control" min="0" value="0" step=".01" placeholder="Ör: 142.4" required>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button id="BtnAddFish" type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    $(document).ready(function() {
-        function Edit(fishId) {
 
-        }
-        function Delete(fishId) {
-            console.log(fishId);
-        }
-    });
     function Delete(fishId) {
         $.ajax({
             type: "DELETE",
@@ -63,4 +87,18 @@
             }
         });
     }
+
+    $("#BtnAddFish").on('click', function() {
+        $.ajax({
+            method: "POST",
+            url: "/FishMarket/Add",
+            data: {
+                Type: $("#Type").val(),
+                Price: $("#Price").val()
+            },
+            success: function(result) {
+                console.log(result);
+            }
+        });
+    });
 </script>

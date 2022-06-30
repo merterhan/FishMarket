@@ -1,4 +1,5 @@
 ﻿using FishMarket.Client;
+using FishMarket.Dto;
 using FishMarket.Service.Abstract;
 using FishMarket.Web.Models;
 using FishMarket.Web.Service;
@@ -28,13 +29,20 @@ public class FishMarketController : Controller
         }
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Add(FishInsertDto fishInsertDto)
+    {
+        var result = await _fishMarketClient.Insert(fishInsertDto);
+        return result;
+    }
+
     [HttpDelete]
     public async Task<IActionResult> Delete(Guid fishId)
     {
         if (_sessionService.GetUser() != null)
         {
             var result = await _fishMarketClient.DeleteFish(fishId);
-            return Json(result);
+            return await Task.FromResult(result);
         }
         else
             return RedirectToAction("Login", "User");
@@ -45,7 +53,6 @@ public class FishMarketController : Controller
     {
         var result = await _fishMarketClient.ListFishes();
         return View(result);
-
     }
 
     public async Task<IActionResult> Edit()

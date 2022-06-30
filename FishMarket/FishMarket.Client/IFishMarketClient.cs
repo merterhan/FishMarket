@@ -6,6 +6,7 @@ namespace FishMarket.Client
 {
     public interface IFishMarketClient
     {
+        [Headers("Authorization: Bearer")]
         [Post("/FishMarket/Insert")]
         Task<IActionResult> Insert([Body] FishInsertDto fishInsertDto);
 
@@ -13,6 +14,7 @@ namespace FishMarket.Client
         [Delete("/FishMarket/DeleteFish/{FishId}")]
         Task<IActionResult> DeleteFish(Guid fishId);
 
+        [Headers("Authorization: Bearer")]
         [Patch("/FishMarket/UpdateFishPrice/{FishId}/{Price}")]
         Task<IActionResult> UpdateFishPrice([Body] Guid fishId, int price);
 

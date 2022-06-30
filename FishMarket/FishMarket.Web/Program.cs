@@ -1,7 +1,6 @@
 using FishMarket.Client;
 using FishMarket.DataAccess.Abstract;
 using FishMarket.DataAccess.Concrete.EntityFrameworkCore;
-using FishMarket.Dto;
 using FishMarket.Service.Abstract;
 using FishMarket.Service.Concrete;
 using FishMarket.Web.Service;
@@ -9,6 +8,8 @@ using Microsoft.AspNetCore.Http.Json;
 using Refit;
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region Services
 builder.Services.AddScoped<IFishDal, EFFishDal>();
 builder.Services.AddScoped<IUserService, UserManager>();
 builder.Services.AddScoped<IUserDal, EFUserDal>();
@@ -17,22 +18,25 @@ builder.Services.AddScoped<IFishService, FishManager>();
 builder.Services.AddScoped<IFishPriceService, FishPriceManager>();
 builder.Services.AddScoped<ITokenService, TokenManager>();
 builder.Services.AddScoped<IUtilityService, UtilityManager>();
+#endregion
 
+
+#region Session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<ISessionService, SessionService>();
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-builder.Services.AddCors();
-builder.Services.AddDistributedMemoryCache();
-
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.IdleTimeout = TimeSpan.FromMinutes(15);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+#endregion
 
+builder.Services.AddControllersWithViews();
+builder.Services.AddCors();
+
+#region Refit Options
 var userApi = RestService.For<IUserClient>(builder.Configuration["ApiUri"]);
 var token = await userApi.GetToken();
 
@@ -48,9 +52,7 @@ builder.Services.AddRefitClient<IUserClient>().ConfigureHttpClient(c =>
 {
     c.BaseAddress = new Uri(builder.Configuration["ApiUri"]);
 });
-
-
-
+#endregion
 
 builder.Services.Configure<JsonOptions>(options =>
 {
@@ -61,6 +63,7 @@ builder.Services.Configure<JsonOptions>(options =>
 
 
 var app = builder.Build();
+
 app.UseSession();
 
 app.UseCors(p =>

@@ -5,6 +5,7 @@ namespace FishMarket.Service.Abstract
 {
     public interface IFishService
     {
+        Task<Fish> GetByIdAsync(Guid fishId);
         Task<List<Fish>> GetListAsync();
         Task<List<Fish>> GetListAsNoTrackingAsync();
         Task<Fish> AddAsync(FishInsertDto fishInsertDto);

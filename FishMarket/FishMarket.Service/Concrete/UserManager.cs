@@ -11,6 +11,7 @@ namespace FishMarket.Service.Concrete
         private readonly IUserDal _userDal;
         private readonly ITokenService _tokenManager;
         private readonly IUtilityService _utilityService;
+
         public UserManager(ITokenService tokenManager, IUserDal userDal, IUtilityService utilityService)
         {
             _tokenManager = tokenManager;
