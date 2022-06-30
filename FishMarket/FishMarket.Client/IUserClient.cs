@@ -11,5 +11,7 @@ namespace FishMarket.Client
 
         [Post("/User/Register")]
         Task<IActionResult> Register([Body] UserRegisterDto userRegisterDto);
+        [Get("/User/GetToken")]
+        Task<string> GetToken();
     }
 }

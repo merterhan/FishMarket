@@ -34,6 +34,7 @@ namespace FishMarket.Core.EntityFrameworkCore
             using (var context = new TContext())
             {     
                 context.RemoveRange(entities);
+                context.SaveChanges();
             }
         }
 

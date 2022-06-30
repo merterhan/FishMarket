@@ -30,17 +30,16 @@ namespace FishMarket.Api.Controllers
             }
         }
 
-        [HttpPost, Route("GetToken")]
-        public async Task<IActionResult> GetToken()
+        [HttpGet, Route("GetToken")]
+        public async Task<string> GetToken()
         {
-            var user = new User
+            var user = new UserLoginDto
             {
-                Id = Guid.NewGuid(),
-                CreatedOn = DateTime.Now,
-                Email = "info@cagrierhan.com"
+                Email = "info@cagrierhan.com",
+                Password = "12345"
             };
-            await _userService.Add(user);
-            return Ok(user);
+            var result =  await _userService.Login(user);
+            return result.Token; 
         }
 
         [AllowAnonymous]

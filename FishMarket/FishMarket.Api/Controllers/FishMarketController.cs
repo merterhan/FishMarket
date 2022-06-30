@@ -64,8 +64,8 @@ namespace FishMarket.Api.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpDelete, Route("DeleteFish/{fishId}/")]
-        public async Task<IActionResult> DeleteFishPrice([FromRoute] Guid fishId)
+        [HttpDelete, Route("DeleteFish/{FishId}")]
+        public async Task<IActionResult> DeleteFish([FromRoute] Guid fishId)
         {
             await _fishManager.Delete(fishId);
             return Ok();

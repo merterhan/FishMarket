@@ -1,6 +1,7 @@
 using FishMarket.Client;
 using FishMarket.DataAccess.Abstract;
 using FishMarket.DataAccess.Concrete.EntityFrameworkCore;
+using FishMarket.Dto;
 using FishMarket.Service.Abstract;
 using FishMarket.Service.Concrete;
 using FishMarket.Web.Service;
@@ -31,7 +32,15 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-builder.Services.AddRefitClient<IFishMarketClient>().ConfigureHttpClient(c =>
+
+var userApi = RestService.For<IUserClient>(builder.Configuration["ApiUri"]);
+var token = await userApi.GetToken();
+
+builder.Services.AddRefitClient<IFishMarketClient>(new RefitSettings()
+{
+    AuthorizationHeaderValueGetter = () =>
+        Task.FromResult(token)
+}).ConfigureHttpClient(c =>
 {
     c.BaseAddress = new Uri(builder.Configuration["ApiUri"]);
 });
@@ -39,6 +48,10 @@ builder.Services.AddRefitClient<IUserClient>().ConfigureHttpClient(c =>
 {
     c.BaseAddress = new Uri(builder.Configuration["ApiUri"]);
 });
+
+
+
+
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.SerializerOptions.PropertyNameCaseInsensitive = false;

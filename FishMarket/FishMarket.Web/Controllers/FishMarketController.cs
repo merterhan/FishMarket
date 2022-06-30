@@ -28,11 +28,18 @@ public class FishMarketController : Controller
         }
     }
 
-    public async Task<IActionResult> Index()
+    [HttpDelete]
+    public async Task<IActionResult> Delete(Guid fishId)
     {
-        return View();
-    }
+        if (_sessionService.GetUser() != null)
+        {
+            var result = await _fishMarketClient.DeleteFish(fishId);
+            return Json(result);
+        }
+        else
+            return RedirectToAction("Login", "User");
 
+    }
     [AllowAnonymous]
     public async Task<IActionResult> List()
     {
