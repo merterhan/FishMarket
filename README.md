@@ -24,6 +24,12 @@ Proje Dizini:
 - swagger şema sorunundan dolayı tüm metotlarda kilit işareti(authorizaiton) görünmektedir fakat GetToken,Login,Register ve Balık listeleme metodları public olarak erişilebilirdir.
 - Yeni kullanıcı kaydederken result olarak email doğrulama linki döndürülmektedir. Email doğrulandıktan sonra login olunabilir. Dönen linke tıklayarak email doğrulanabilir. Bunun için ayrıca bir EmailClient oluşturulup mail gönderimi yapılmamıştır.
 - service katmanındaki classların yaşam süreleri scoped olarak ayarlanmıştır. Map işlemleri için AutoMapper kullanılmıştır ve lifecycle'u singleton'dır.
+- Encryption, Decryption ve Hashing işlemleri IUitility'den implement edilen UtilityManager classında yapılmıştır.
+
+Notlar:
+- code first oluşturulan tabloların konfigürasyonları kolay yönetilebilmesi için DataAccess/Concrete/EntityFrameworkCore/Configurations klasörü altında ayrılmıştır ve bu şekilde migration çıkılmıştır. Swagger şema konfigürasyonu hatası aldığından dolayı tekrar DbContext içerisine alınıp proje çalıştırılmıştır.
+- tablo konfigürasyonları fluent kullanılarak düzenlenmesine rağmen, foreign key ilişkileri mysql sunucusunda alınan ilişki yetkilendirme sorunundan dolayı oluşmamıştır. tablolardaki diğer unique key ve primary key'ler oluşmasında bir sorun olmamıştır.
+- Web projesinde post gönderimleri için front-end kısmında genel örnek olması açısından hem razor tag-helper'ları hem de jquery ajax gönderimleri yapılmıştır.
 
 Genel:
 Proje n-Tier Architect ile olşuturulmuştur. EntityFrameworkCore 6.0.6 kullanılmıştır. Web projesinden api'ye direk erişim sağlanmamış olup Refit kullanılarak bir rest client sağlanmıştır. Gösterim açısından Hardcoded alanlar şifrelenip appsettings dosyasında tutulmuştur. Bazı class'larda Hızlı geliştirme açısından bazı katmanlarda hardcoded veriler ayrı bir settings dosyasına taşınmamıştır. Hata loglaması örnekleri api projesinde FishMarketController'da mevcuttur.
