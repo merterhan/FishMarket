@@ -15,8 +15,8 @@ namespace FishMarket.Client
         Task<IActionResult> DeleteFish(Guid fishId);
 
         [Headers("Authorization: Bearer")]
-        [Patch("/FishMarket/UpdateFishPrice/{FishId}/{Price}")]
-        Task<IActionResult> UpdateFishPrice([Body] Guid fishId, int price);
+        [Patch("/FishMarket/UpdateFishPrice")]
+        Task<IActionResult> UpdateFishPrice([Body] FishPriceUpdateDto fishUpdateDto);
 
         [Get("/FishMarket/ListFishes")]
         Task<List<FishDto>> ListFishes();

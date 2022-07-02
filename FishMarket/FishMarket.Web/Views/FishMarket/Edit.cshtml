@@ -1,12 +1,15 @@
 ﻿@model List<FishMarket.Dto.FishDto>
 
+<div id="resultAlert" class="alert alert-success" role="alert" style="display:none">
+  <span id="alertMessage"></span>
+</div>
+
 <button onclick="$('#newFishModal').modal('show')" class="btn btn-primary">New Fish</button>
 <table class="table">
     <thead>
         <tr>
             <th scope="col">Type</th>
             <th scope="col">Price</th>
-            <th scope="col">Edit</th>
             <th scope="col">Delete</th>
 
         </tr>
@@ -16,8 +19,10 @@
         {
             <tr>
                 <th colspan="1">@fish.Type</th>
-                <td colspan="1">@fish.Price</td>
-                <td colspan="1"><button type="button" class="btn btn-primary btn-sm" onclick="Edit('@fish.Id')">Edit</button></td>
+                <td colspan="1">
+                    @Html.TextBoxFor(m => fish.Price, new { id="input_" + fish.Id, @class="form-control"})
+                    @*<input type="number" class="form-control" min="0" value="@Decimal.ToDouble(fish.Price.Value)" step=".01" placeholder="Ör: 142.4" required>*@
+                </td>
                 <td colspan="1"><button type="button" class="btn btn-danger btn-sm" onclick="Delete('@fish.Id')">Delete</button></td>
             </tr>
         }
@@ -74,13 +79,63 @@
 </div>
 
 <script>
+    var typingTimer; 
+    var doneTypingInterval = 2000; 
+
+    var xTriggered = 0;
+    
+    $("[name='fish.Price']").keypress(function(event) {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(function() {
+        if (event.which == 13) {
+                event.preventDefault();
+            }
+            xTriggered++;
+
+            var id = event.target.id.split('_')[1];
+
+            $.ajax({
+                method: "POST",
+                data: {
+                    FishId: id,
+                    Price: event.target.value
+                },
+                url: "/FishMarket/Edit",
+                success: function(result) {
+                    if (result) {
+                    var fishName = $("#input_" + id).closest("tr").children()[0].innerHTML;
+
+                        $("#alertMessage").text(fishName + " fiyatı " + event.target.value + " olarak güncellendi.")
+                        $("#resultAlert").fadeIn("slow",
+                            function() {
+                                $("#resultAlert").fadeOut(3000);
+                            });
+                    }
+                }
+            });
+
+            var msg = "Handler for .keypress() called " + xTriggered + " time(s).";
+            console.log(msg, "html");
+            console.log(event);
+        },doneTypingInterval);
+            
+
+    });
 
     function Delete(fishId) {
         $.ajax({
             type: "DELETE",
             url: "/FishMarket/Delete?fishId=" + fishId,
             success: function(result) {
-                console.log(result);
+                if (result) {
+                    var fishName = $("#input_" + fishId).closest("tr").children()[0].innerHTML;
+                    $("#input_" + fishId).closest("tr").hide('slow', function(){ $("#input_" + fishId).closest("tr").remove(); });
+                        $("#alertMessage").text( fishName + "başarıyla silindi.")
+                        $("#resultAlert").fadeIn("slow",
+                            function() {
+                                $("#resultAlert").fadeOut(3000);
+                            });
+                    }
             },
             error: function(err) {
 

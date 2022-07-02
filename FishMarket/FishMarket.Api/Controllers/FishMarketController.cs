@@ -15,8 +15,6 @@ namespace FishMarket.Api.Controllers
         private readonly ILogger<FishMarketController> _logger;
         private readonly IFishService _fishManager;
         private readonly IFishPriceService _fishPriceManager;
-
-        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
 
@@ -25,15 +23,11 @@ namespace FishMarket.Api.Controllers
             using (var scope = serviceProvider.CreateScope())
             {
                 _logger = scope.ServiceProvider.GetRequiredService<ILogger<FishMarketController>>();
-                _fishManager = scope.ServiceProvider.GetRequiredService<IFishService>();
-                _fishPriceManager = scope.ServiceProvider.GetRequiredService<IFishPriceService>();
-                _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
                 _mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
-                _logger = scope.ServiceProvider.GetRequiredService<ILogger<FishMarketController>>();
-
+                _fishManager = scope.ServiceProvider.GetRequiredService<IFishService>();                
+                _fishPriceManager = scope.ServiceProvider.GetRequiredService<IFishPriceService>();
             }
         }
-
 
         /// <summary>
         /// Creates a new fish with its price
@@ -70,8 +64,8 @@ namespace FishMarket.Api.Controllers
         /// <returns></returns>
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPatch, Route("UpdateFishPrice/{FishId}/{Price}")]
-        public async Task<IActionResult> UpdateFishPrice([FromRoute] FishPriceUpdateDto fishUpdateDto)
+        [HttpPatch, Route("UpdateFishPrice")]
+        public async Task<IActionResult> UpdateFishPrice([FromBody] FishPriceUpdateDto fishUpdateDto)
         {
             var model = _mapper.Map<FishPrice>(fishUpdateDto);
             await _fishPriceManager.UpdateFishPriceAsync(model);

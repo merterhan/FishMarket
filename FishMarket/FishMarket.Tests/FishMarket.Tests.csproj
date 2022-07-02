@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FishMarket.Api\FishMarket.Api.csproj" />
     <ProjectReference Include="..\FishMarket.Service\FishMarket.Service.csproj" />
+    <ProjectReference Include="..\FishMarket.Web\FishMarket.Web.csproj" />
   </ItemGroup>
 
 </Project>

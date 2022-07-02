@@ -13,8 +13,6 @@ namespace FishMarket.Service.Abstract
         Task<int> Update(User user);
         Task<int> Delete(Guid id);
         Task<User> Get(Guid userId);
-
-        Task<string> GenerateEmailConfirmationTokenAsync(User user);
         Task<BaseResponse> ConfirmUserEmail(string email);
     }
 }

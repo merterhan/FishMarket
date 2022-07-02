@@ -57,7 +57,6 @@ namespace FishMarket.DataAccess.Concrete.EntityFrameworkCore
             modelBuilder.Entity<FishPrice>().Property(e => e.Price).HasPrecision(10, 2);
 
             modelBuilder.Entity<FishPrice>()
-              .Ignore(i => i.CreatedBy)
               .Ignore(i => i.ChangedOn)
               .Ignore(i => i.ChangedBy);
             #endregion

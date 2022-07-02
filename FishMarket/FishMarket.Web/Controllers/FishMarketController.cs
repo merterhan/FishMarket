@@ -37,15 +37,17 @@ public class FishMarketController : Controller
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete(Guid fishId)
+    public bool Delete(Guid fishId)
     {
-        if (_sessionService.GetUser() != null)
+        try
         {
-            var result = await _fishMarketClient.DeleteFish(fishId);
-            return await Task.FromResult(result);
+            _fishMarketClient.DeleteFish(fishId);
+            return true;
         }
-        else
-            return RedirectToAction("Login", "User");
+        catch (Exception)
+        {
+            return false;
+        }
 
     }
     [AllowAnonymous]
@@ -65,6 +67,21 @@ public class FishMarketController : Controller
         else
             return RedirectToAction("Login", "User");
 
+    }
+    [HttpPost]
+    public bool Edit(FishPriceUpdateDto model)
+    {
+        try
+        {
+            model.CreatedBy = _sessionService.GetUser().Id;
+            model.CreatedOn = DateTime.Now;
+            _fishMarketClient.UpdateFishPrice(model);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

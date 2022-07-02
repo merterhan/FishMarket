@@ -14,7 +14,6 @@ namespace FishMarket.Service.Concrete
         private readonly IConfiguration _configuration;
         private string _encryptPublicKey;
         private readonly IDataProtectionProvider _dataProtectionProvider;
-        //private const string Key = "cut-the-night-with-the-light";
         public UtilityManager(IConfiguration configuration, IDataProtectionProvider dataProtectionProvider)
         {
             _configuration = configuration;

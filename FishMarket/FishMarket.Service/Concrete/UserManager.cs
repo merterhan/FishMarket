@@ -38,7 +38,7 @@ namespace FishMarket.Service.Concrete
             }
             catch (Exception e)
             {
-                throw e;
+                return e.Message;
             }
 
         }
@@ -99,11 +99,6 @@ namespace FishMarket.Service.Concrete
 
             }
 
-        }
-
-        public Task<string> GenerateEmailConfirmationTokenAsync(User user)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<User> Get(Guid userId)
