@@ -32,4 +32,4 @@ Notlar:
 - Web projesinde post gönderimleri için front-end kısmında genel örnek olması açısından hem razor tag-helper'ları hem de jquery ajax gönderimleri yapılmıştır.
 
 Genel:
-Proje n-Tier Architect ile olşuturulmuştur. EntityFrameworkCore 6.0.6 kullanılmıştır. Web projesinden api'ye direk erişim sağlanmamış olup Refit kullanılarak bir rest client sağlanmıştır. Gösterim açısından Hardcoded alanlar şifrelenip appsettings dosyasında tutulmuştur. Bazı class'larda Hızlı geliştirme açısından bazı katmanlarda hardcoded veriler ayrı bir settings dosyasına taşınmamıştır. Hata loglaması örnekleri api projesinde FishMarketController'da mevcuttur.
+Proje n-Tier Architect ile olşuturulmuştur. EntityFrameworkCore 6.0.6 kullanılmıştır. Web projesinden api'ye direk erişim sağlanmamış olup Refit kullanılarak bir rest client yazılmıştır (FishMarket.Client). Gösterim açısından hard-coded alanlar şifrelenip appsettings.json dosyasında tutulmuştur. Bazı class'larda hıslı geliştirme açısından bazı katmanlarda hardcoded veriler ayrı bir settings dosyasına taşınmamıştır. Hata loglaması örnekleri api projesinde FishMarketController'da mevcuttur.
