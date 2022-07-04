@@ -30,24 +30,32 @@ public class FishMarketController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add(FishInsertDto fishInsertDto)
-    {
-        var result = await _fishMarketClient.Insert(fishInsertDto);
-        return result;
-    }
-
-    [HttpDelete]
-    public bool Delete(Guid fishId)
+    public async Task<bool> Add(FishInsertDto fishInsertDto)
     {
         try
         {
-            _fishMarketClient.DeleteFish(fishId);
+            await _fishMarketClient.Insert(fishInsertDto);
             return true;
         }
         catch (Exception)
         {
             return false;
         }
+    }
+
+    [HttpDelete]
+    public async Task<bool> Delete(Guid fishId)
+    {
+        try
+        {
+            var result = await _fishMarketClient.DeleteFish(fishId);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+        
 
     }
     [AllowAnonymous]
@@ -69,13 +77,13 @@ public class FishMarketController : Controller
 
     }
     [HttpPost]
-    public bool Edit(FishPriceUpdateDto model)
+    public async Task<bool> Edit(FishPriceUpdateDto model)
     {
         try
         {
             model.CreatedBy = _sessionService.GetUser().Id;
             model.CreatedOn = DateTime.Now;
-            _fishMarketClient.UpdateFishPrice(model);
+            await _fishMarketClient.UpdateFishPrice(model);
             return true;
         }
         catch (Exception ex)

@@ -126,16 +126,15 @@
         $.ajax({
             type: "DELETE",
             url: "/FishMarket/Delete?fishId=" + fishId,
-            success: function(result) {
-                if (result) {
+            success: function(result) {             
                     var fishName = $("#input_" + fishId).closest("tr").children()[0].innerHTML;
                     $("#input_" + fishId).closest("tr").hide('slow', function(){ $("#input_" + fishId).closest("tr").remove(); });
-                        $("#alertMessage").text( fishName + "başarıyla silindi.")
+                        $("#alertMessage").text( fishName + " başarıyla silindi.")
                         $("#resultAlert").fadeIn("slow",
                             function() {
                                 $("#resultAlert").fadeOut(3000);
                             });
-                    }
+                    
             },
             error: function(err) {
 
@@ -152,7 +151,9 @@
                 Price: $("#Price").val()
             },
             success: function(result) {
-                console.log(result);
+                if(true){
+                    setTimeout(window.location.reload(), 4000);
+                }
             }
         });
     });

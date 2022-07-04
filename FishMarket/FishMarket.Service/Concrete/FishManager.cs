@@ -2,7 +2,6 @@
 using FishMarket.Dto;
 using FishMarket.Entities.Concrete;
 using FishMarket.Service.Abstract;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FishMarket.Service.Concrete
 {
@@ -12,14 +11,10 @@ namespace FishMarket.Service.Concrete
         private readonly IFishDal _fishDal;
         private readonly IFishPriceDal _fishPriceDal;
 
-        public FishManager(IServiceScopeFactory serviceProvider)
+        public FishManager(IFishDal fishDal, IFishPriceDal fishPriceDal)
         {
-            using (var scope = serviceProvider.CreateScope())
-            {
-                _fishDal = scope.ServiceProvider.GetRequiredService<IFishDal>();
-                _fishPriceDal = scope.ServiceProvider.GetRequiredService<IFishPriceDal>();
-
-            }
+            _fishDal = fishDal;
+            _fishPriceDal = fishPriceDal;
         }
         public async Task<Fish> AddAsync(FishInsertDto fishInsertDto)
         {
@@ -40,7 +35,7 @@ namespace FishMarket.Service.Concrete
                 Price = fishInsertDto.Price,
                 CreatedOn = now
             };
-            
+
             await _fishPriceDal.Add(fishPrice);
 
             return fish;
@@ -69,25 +64,25 @@ namespace FishMarket.Service.Concrete
         {
             return await _fishDal.GetList();
         }
-        
+
         public async Task<List<FishDto>> ListFishesAsync()
         {
             var result = (from f in await _fishDal.GetListAsNoTracking()
                           join p in await _fishPriceDal.GetListAsNoTracking() on f.Id equals p.FishId into fGroup
-                          from p in fGroup.OrderByDescending(d=>d.CreatedOn).Take(1)
+                          from p in fGroup.OrderByDescending(d => d.CreatedOn).Take(1)
                           select new FishDto
                           {
                               Id = f.Id,
                               Type = f.Type,
                               Price = p.Price
                           }).ToList();
-            
-            return  result;
+
+            return result;
         }
 
         public async Task<Fish> GetByIdAsync(Guid fishId)
         {
-            return await _fishDal.Get(w=>w.Id == fishId);
+            return await _fishDal.Get(w => w.Id == fishId);
         }
     }
 }

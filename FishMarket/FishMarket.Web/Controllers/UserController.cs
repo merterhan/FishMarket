@@ -48,7 +48,6 @@ public class UserController : Controller
             _sessionService.SetUser(result);
         }
         return RedirectToAction("Edit", "FishMarket");
-        //return Json(result);
     }
 
     [AllowAnonymous]

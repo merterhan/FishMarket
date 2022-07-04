@@ -1,35 +1,33 @@
-using AutoMapper;
-using FishMarket.Api.Controllers;
 using FishMarket.DataAccess.Concrete.EntityFrameworkCore;
-using FishMarket.Dto.ServiceResponseDtos;
+using FishMarket.Dto;
 using FishMarket.Service.Concrete;
 
 namespace FishMarket.Tests;
 
 public class FishMarketTest
-{
-   
+{   
     [Fact]
-    public async void Fishes_Shold_Be_Listing()
+    public async void Fish_Sholud_Added()
     {
-        var mock = new Mock<IFishService>();
-
-        var serviceProvider = new Mock<IServiceProvider>();
-        //TODO serviceProvider.Setup with FishManager??
-        serviceProvider
-            .Setup(x => x.GetService(typeof(FishManager)))
-            .Returns(mock);
-
-        var serviceScope = new Mock<IServiceScope>();
-        serviceScope.Setup(x => x.ServiceProvider).Returns(serviceProvider.Object);
-        var serviceScopeFactory = new Mock<IServiceScopeFactory>();
-        serviceScopeFactory.Setup(s => s.CreateScope()).Returns(serviceScope.Object);
-
-        var mockUser = new Mock<IUserService>();
-
-        var controller = new FishMarketController(serviceScopeFactory.Object);
-        var result = await controller.ListFishes();
-
+        FishManager service = new FishManager(new EFFishDal(), new EFFishPriceDal());
+        var model = new FishInsertDto
+        {
+            Type = "Tuna",
+            Price = 42
+        }; 
+        var result = await service.AddAsync(model);
+        
         Assert.NotNull(result);
+    }
+
+    [Fact]
+    public void Token_Should_Generate_Valid()
+    {
+        var testEmail = "test@cagrierhan.com";
+        var service = new TokenManager();
+        var token =  service.GetToken(testEmail);
+        var isValid = service.ValidateToken(token, testEmail);
+        Assert.NotNull(token);
+        Assert.True(isValid);
     }
 }

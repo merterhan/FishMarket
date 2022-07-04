@@ -93,7 +93,7 @@ namespace FishMarket.Api.Controllers
         [HttpDelete, Route("DeleteFish/{fishId}")]
         public async Task<IActionResult> DeleteFish([FromRoute] Guid fishId)
         {
-            var fish = _fishManager.GetByIdAsync(fishId);
+            var fish = await _fishManager.GetByIdAsync(fishId);
             if (fish == null)
                 return BadRequest("Fish Not Found");
             try
@@ -106,7 +106,7 @@ namespace FishMarket.Api.Controllers
                 return BadRequest(ex.Message);
             }
 
-            return Ok(await fish);
+            return Ok(true);
         }
     }
 }
