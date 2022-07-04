@@ -25,6 +25,7 @@ Proje Dizini:
 - Yeni kullanıcı kaydederken result olarak email doğrulama linki döndürülmektedir. Email doğrulandıktan sonra login olunabilir. Dönen linke tıklayarak email doğrulanabilir. Bunun için ayrıca bir EmailClient oluşturulup mail gönderimi yapılmamıştır.
 - service katmanındaki classların yaşam süreleri scoped olarak ayarlanmıştır. Map işlemleri için AutoMapper kullanılmıştır ve lifecycle'u singleton'dır.
 - Encryption, Decryption ve Hashing işlemleri IUitility'den implement edilen UtilityManager classında yapılmıştır.
+- .net 6'da moq'ların içerisinde dependency injection yönetiminde sorun yaşadığım için unit testler service katmanındaki bazı metotlar için yazılmıştır. Ayrıca bir entegrasyon testi yazılmamıştır. 
 
 Notlar:
 - code first oluşturulan tabloların konfigürasyonları kolay yönetilebilmesi için DataAccess/Concrete/EntityFrameworkCore/Configurations klasörü altında ayrılmıştır ve bu şekilde migration çıkılmıştır. Swagger şema konfigürasyonu hatası aldığından dolayı tekrar DbContext içerisine alınıp proje çalıştırılmıştır.
