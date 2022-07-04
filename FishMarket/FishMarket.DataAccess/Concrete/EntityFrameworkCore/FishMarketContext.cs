@@ -1,5 +1,6 @@
 ﻿using FishMarket.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace FishMarket.DataAccess.Concrete.EntityFrameworkCore
@@ -8,10 +9,9 @@ namespace FishMarket.DataAccess.Concrete.EntityFrameworkCore
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql(@"Server=cagrierhan.com;Database=cagrierh_FishMarketDB;Uid=cagrierh_sa;Pwd=P2!ZW.n4;",
+            optionsBuilder.UseMySql(Settings.GetSettingValue("DBConnection", "MySQLConnectionString"),
                 new MySqlServerVersion(new Version(5, 7, 37)));
             base.OnConfiguring(optionsBuilder);
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

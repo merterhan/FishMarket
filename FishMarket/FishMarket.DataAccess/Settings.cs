@@ -1,13 +1,34 @@
-﻿namespace FishMarket.DataAccess
-{
-    public class Settings
-    {
-        public string ConnectionString { get; }
+﻿using Microsoft.Extensions.Configuration;
 
-        public Settings()
-        {
-            ConnectionString = @"Server=cagrierhan.com;Database=cagrierh_FishMarketDB;Uid=cagrierh_sa;Pwd=P2!ZW.n4;";
-        }
-        
+namespace FishMarket.DataAccess;
+
+
+public class Settings
+{
+    #region Methods
+    public static string GetSettingValue(string MainKey, string SubKey)
+    {
+        return Configuration.GetSection(MainKey).GetValue<string>(SubKey);
     }
+    #endregion
+
+    #region Properties
+    public static IConfigurationRoot _configuration;
+    public static IConfigurationRoot Configuration
+    {
+        get
+        {
+            if (_configuration == null)
+            {
+                IConfigurationBuilder builder = new ConfigurationBuilder()
+                        .SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                        .AddEnvironmentVariables();
+                _configuration = builder.Build();
+            }
+            return _configuration;
+        }
+    }
+    #endregion
+
 }
