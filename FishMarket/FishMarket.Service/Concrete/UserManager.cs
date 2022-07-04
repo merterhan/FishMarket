@@ -75,6 +75,14 @@ namespace FishMarket.Service.Concrete
                     Message = "User Not Found"
                 };
             }
+            else if (!user.EmailConfirmed)
+            {
+                return new UserLoginResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "User Email Not Confirmed!"
+                };
+            }
             else
             {
                 var hashedPassword = _utilityService.VerifyPassword(userLoginDto.Password, user.PasswordSalt, user.Password);
