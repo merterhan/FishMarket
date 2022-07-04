@@ -24,7 +24,7 @@ namespace FishMarket.Api.Controllers
             {
                 _logger = scope.ServiceProvider.GetRequiredService<ILogger<FishMarketController>>();
                 _mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
-                _fishManager = scope.ServiceProvider.GetRequiredService<IFishService>();                
+                _fishManager = scope.ServiceProvider.GetRequiredService<IFishService>();
                 _fishPriceManager = scope.ServiceProvider.GetRequiredService<IFishPriceService>();
             }
         }
@@ -95,7 +95,11 @@ namespace FishMarket.Api.Controllers
         {
             var fish = await _fishManager.GetByIdAsync(fishId);
             if (fish == null)
+            {
+                _logger.LogError(String.Concat("Fish Not Found", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")));
                 return BadRequest("Fish Not Found");
+            }
+
             try
             {
                 await _fishManager.Delete(fishId);

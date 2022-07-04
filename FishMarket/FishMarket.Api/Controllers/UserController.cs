@@ -5,6 +5,8 @@ using FishMarket.Entities.Concrete;
 using FishMarket.Service.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
+using System.Text.Json;
 
 namespace FishMarket.Api.Controllers
 {
@@ -59,8 +61,15 @@ namespace FishMarket.Api.Controllers
         [HttpPost, Route("Login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
         {
-            var token = await _userService.Login(userLoginDto);
-            return Ok(token);
+            var result = await _userService.Login(userLoginDto);
+            if (string.IsNullOrEmpty(result.Token) && !result.IsSuccess)
+            {
+                _logger.LogError(JsonSerializer.Serialize(result));
+                return BadRequest(result.Message);
+            }
+
+            _logger.LogInformation(JsonSerializer.Serialize(result));
+            return Ok(result);
         }
 
         /// <summary>
