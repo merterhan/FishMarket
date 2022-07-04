@@ -21,7 +21,6 @@
                 <th colspan="1">@fish.Type</th>
                 <td colspan="1">
                     @Html.TextBoxFor(m => fish.Price, new { id="input_" + fish.Id, @class="form-control"})
-                    @*<input type="number" class="form-control" min="0" value="@Decimal.ToDouble(fish.Price.Value)" step=".01" placeholder="Ör: 142.4" required>*@
                 </td>
                 <td colspan="1"><button type="button" class="btn btn-danger btn-sm" onclick="Delete('@fish.Id')">Delete</button></td>
             </tr>
@@ -72,7 +71,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="BtnAddFish" type="button" class="btn btn-primary">Save changes</button>
+                <button id="BtnAddFish" type="button" class="btn btn-primary">Kaydet</button>
             </div>
         </div>
     </div>
@@ -114,9 +113,7 @@
                 }
             });
 
-            var msg = "Handler for .keypress() called " + xTriggered + " time(s).";
-            console.log(msg, "html");
-            console.log(event);
+        
         },doneTypingInterval);
             
 

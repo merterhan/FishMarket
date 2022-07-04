@@ -77,13 +77,13 @@ public class FishMarketController : Controller
 
     }
     [HttpPost]
-    public async Task<bool> Edit(FishPriceUpdateDto model)
+    public bool Edit(FishPriceUpdateDto model)
     {
         try
         {
             model.CreatedBy = _sessionService.GetUser().Id;
             model.CreatedOn = DateTime.Now;
-            await _fishMarketClient.UpdateFishPrice(model);
+            _fishMarketClient.UpdateFishPrice(model);
             return true;
         }
         catch (Exception ex)
